@@ -2,31 +2,23 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
 namespace EntityLayer.Concrete;
 
-public partial class User
+public class User : IdentityUser<int>
 {
-    [Key]
-    [Column("ID")]
-    public int Id { get; set; }
+	public string? Name { get; set; }
+	public string? Mail { get; set; }
+	public string? Surname { get; set; }
+	public string? Password { get; set; }
+	public string? ImageUrl { get; set; } // Resmin yolu ya da adı
 
-    [StringLength(255)]
-    public string? Email { get; set; }
-
-    [StringLength(255)]
-    public string? Password { get; set; }
-
-    [StringLength(100)]
-    public string? FullName { get; set; }
-
-    [Column(TypeName = "datetime")]
-    public DateTime? RegistrationDate { get; set; }
-
-    [InverseProperty("User")]
-    public virtual ICollection<Expense> Expenses { get; set; } = new List<Expense>();
-
-    [InverseProperty("User")]
-    public virtual ICollection<Wallet> Wallets { get; set; } = new List<Wallet>();
+	// Kullanıcıdan alınan resmi tutacak olan alan
+	[NotMapped] // Veritabanına yansıtılmasını engeller
+	public IFormFile? Picture { get; set; }
 }
+

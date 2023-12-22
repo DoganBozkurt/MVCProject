@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Repository
 {
-    public class GenericRepository<T> : IGenericDal<T> where T : class
+
+	public class GenericRepository<T> : IGenericDal<T> where T : class
     {
         public void Delete(T t)
         {
@@ -17,17 +18,6 @@ namespace DataAccessLayer.Repository
             c.SaveChanges();
         }
 
-        public T GetById(int id)
-        {
-            using var c = new ContextDal();
-            return c.Set<T>().Find(id);
-        }
-
-        public List<T> GetList()
-        {
-            using var c = new ContextDal();
-            return c.Set<T>().ToList();
-        }
 
         public void Insert(T t)
         {
@@ -42,5 +32,10 @@ namespace DataAccessLayer.Repository
             c.Update(t);
             c.SaveChanges();
         }
-    }
+		public T GetById(int id)
+		{
+			using var c = new ContextDal();
+			return c.Set<T>().Find(id);
+		}
+	}
 }

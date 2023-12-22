@@ -9,5 +9,6 @@ namespace BusinessLayer.Abstract
 {
     public interface IUserService:IGenericService<User>
     {
-    }
+		public Task<User> TFindByEmailAsync(string email);
+	}
 }

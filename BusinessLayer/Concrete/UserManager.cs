@@ -9,38 +9,60 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Concrete
 {
-    public class UserManager : IUserService
-    {
-        IUserDal _userDal;
+	public class UserManager : IUserService
+	{
+		IUserDal _userDal;
 
-        public UserManager(IUserDal userDal)
-        {
-            _userDal = userDal;
-        }
+		public UserManager(IUserDal userDal)
+		{
+			_userDal = userDal;
+		}
 
-        public void TAdd(User t)
-        {
-            _userDal.Insert(t);
-        }
+		public void TAdd(User t)
+		{
+			_userDal.Insert(t);
+		}
 
-        public List<User> TGetAll()
-        {
-            return _userDal.GetList();
-        }
 
-        public User TGetById(int id)
-        {
-            throw new NotImplementedException();
-        }
+		public User TGetById(int id)
+		{
+			return _userDal.GetById(id);
+		}
 
-        public void TRemove(User t)
-        {
-            throw new NotImplementedException();
-        }
+		public void TRemove(User t)
+		{
+			throw new NotImplementedException();
+		}
 
-        public void TUpdate(User t)
-        {
-            throw new NotImplementedException();
-        }
-    }
+		public void TUpdate(User t)
+		{
+			throw new NotImplementedException();
+		}
+
+		void IGenericService<User>.TAdd(User t)
+		{
+			throw new NotImplementedException();
+		}
+
+
+		User IGenericService<User>.TGetById(int id)
+		{
+			throw new NotImplementedException();
+		}
+
+		void IGenericService<User>.TRemove(User t)
+		{
+			throw new NotImplementedException();
+		}
+
+		void IGenericService<User>.TUpdate(User t)
+		{
+			throw new NotImplementedException();
+		}
+		public Task<User> TFindByEmailAsync(string email)
+		{
+			return _userDal.FindByEmailAsync(email);
+		}
+
+	}
 }

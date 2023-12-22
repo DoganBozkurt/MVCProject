@@ -1,17 +1,27 @@
 ﻿using BusinessLayer.Concrete;
 using DataAccessLayer.EntityFramework;
 using EntityLayer.Concrete;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MVCProject.Controllers
 {
+    [Authorize]
     public class CategoryController : Controller
     {
-        Category2Manager category2 = new Category2Manager(new EfCategory2Dal());
+        CategoryManager category2 = new CategoryManager(new EfCategoryDal());
+		readonly private UserManager<User> _userManager;
 
-        public IActionResult Index()
+		public CategoryController(UserManager<User> userManager)
+		{
+			_userManager = userManager;
+		}
+
+		public async Task<IActionResult> Index()
         {
-            var values = category2.TGetAll();
+			var currentUser = await _userManager.GetUserAsync(User);
+			var values = category2.TGetCategoriesWithUserID(currentUser.Id);
 
             return View(values);
         }
@@ -20,7 +30,7 @@ namespace MVCProject.Controllers
         public IActionResult AddOrEdit(int id = 0)
         {
             if (id == 0)
-                return View(new Category2());
+                return View(new Category());
             else
             {
                 var value = category2.TGetById(id);
@@ -31,12 +41,16 @@ namespace MVCProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddOrEdit([Bind("CategoryID,Title,Icon,Type")] Category2 category)
+        public async Task<IActionResult> AddOrEdit([Bind("CategoryID,Title,Icon,Type")] Category category)
         {
             if (ModelState.IsValid)
             {
-                if (category.CategoryID == 0)
-                    category2.TAdd(category);
+				var currentUser = await _userManager.GetUserAsync(User);
+				category.UserID = currentUser.Id;
+				if (category.CategoryID == 0)
+                {
+					category2.TAdd(category);
+                }
                 else
                     category2.TUpdate(category);
 

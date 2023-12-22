@@ -1,23 +1,38 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace EntityLayer.Concrete;
-
-public partial class Category
+namespace EntityLayer.Concrete
 {
-    [Key]
-    [Column("ID")]
-    public int Id { get; set; }
+    public class Category
+    {
+        [Key]
+        public int CategoryID { get; set; }
+		public int UserID { get; set; }
+		public User? User { get; set; }
 
-    [StringLength(100)]
-    public string? Name { get; set; }
+		[Required(ErrorMessage = "Title is required.")]
+        public string Title { get; set; }
 
-    [StringLength(255)]
-    public string? Description { get; set; }
+        [Column(TypeName = "nvarchar(50)")]
+        public string Icon { get; set; } = "";
 
-    [InverseProperty("Category")]
-    public virtual ICollection<Expense> Expenses { get; set; } = new List<Expense>();
+        [Column(TypeName = "nvarchar(50)")]
+        public string Type { get; set; } = "Expense";
+
+        [NotMapped]
+        public string? TitleWithIcon
+        {
+
+            get
+            {
+                return this.Icon + " " + this.Title;
+            }
+        }
+    }
 }

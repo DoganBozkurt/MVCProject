@@ -1,27 +1,39 @@
-﻿using BusinessLayer.Concrete;
-using DataAccessLayer.EntityFramework;
-using EntityLayer.Concrete;
+﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Connections.Features;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Transaction = EntityLayer.Concrete.Transaction;
 using TransactionManager = BusinessLayer.Concrete.TransactionManager;
+using BusinessLayer.Concrete;
+using EntityLayer.Concrete;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using DataAccessLayer.EntityFramework;
 
 namespace MVCProject.Controllers
 {
+    [Authorize]
     public class TransactionController : Controller
     {
         TransactionManager transactionManager = new TransactionManager(new EFTransactionDal());
-		Category2Manager category2 = new Category2Manager(new EfCategory2Dal());
-		public  IActionResult Index()
+		CategoryManager category2 = new CategoryManager(new EfCategoryDal());
+        readonly private UserManager<User> _userManager;
+
+		public TransactionController(UserManager<User> userManager)
+		{
+			_userManager = userManager;
+		}
+
+		public async Task<IActionResult> Index()
         {
-            var values = transactionManager.TTransactionsWithCategory();
+			var currentUser = await _userManager.GetUserAsync(User);
+			var values = transactionManager.TTransactionsWithCategory(currentUser.Id);
             return View(values);
         }
 
-        public IActionResult AddOrEdit(int id = 0)
+        public async Task<IActionResult> AddOrEdit(int id = 0)
         {
-            PopulateCategories();
+           await PopulateCategories();
             if (id == 0)
                 return View(new Transaction());
             else
@@ -33,22 +45,32 @@ namespace MVCProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddOrEdit([Bind("TransactionId,CategoryID,Amount,Note,Date")] Transaction transaction)
+        public async Task<IActionResult> AddOrEdit([Bind("TransactionId,CategoryID,Amount,Note,Date")] Transaction transaction)
         {
-            if (ModelState.IsValid)
-            {
-                if (transaction.TransactionId == 0)
-                    transactionManager.TAdd(transaction);
-                else
-                { transactionManager.TUpdate(transaction); }
+			if (ModelState.IsValid)
+			{
 
-                return RedirectToAction(nameof(Index));
-            }
-            PopulateCategories();
-            return View(transaction);
-        }
+				if (transaction.TransactionId == 0)
+				{
+					var currentUser = await _userManager.GetUserAsync(User);
+					transaction.UserID = currentUser.Id;
+					transactionManager.TAdd(transaction);
+				}
+				else
+				{
+					var currentUser = await _userManager.GetUserAsync(User);
+					transaction.UserID = currentUser.Id;
+					transactionManager.TUpdate(transaction);
+				}
 
-        [HttpPost, ActionName("Delete")]
+				return RedirectToAction(nameof(Index));
+			}
+			await PopulateCategories();
+			return View(transaction);
+
+		}
+
+		[HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
@@ -63,10 +85,11 @@ namespace MVCProject.Controllers
 
 
         [NonAction]
-        public void PopulateCategories()
+        public async Task PopulateCategories()
         {
-			var kategoriSec = category2.TGetAll();
-            Category2 DefaultCategory = new Category2() { CategoryID = 0, Title = "Choose a Category" };
+			var currentUser = await _userManager.GetUserAsync(User);
+			var kategoriSec = category2.TGetCategoriesWithUserID(currentUser.Id);
+            Category DefaultCategory = new Category() { CategoryID = 0, Title = "Choose a Category" };
             ViewBag.Categories = kategoriSec;
         }
     }

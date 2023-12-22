@@ -1,0 +1,91 @@
+﻿@model EntityLayer.Concrete.User;
+
+@{
+	Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+	<title>Register Form</title>
+	<link rel="stylesheet" href="/css/loginAndRegister/style.css" />
+	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+	<script>
+		window.onload = function () {
+				var successRegister = '@Html.Raw(TempData["SuccessRegister"])';
+				var field = '@Html.Raw(TempData["fieldRegister"])';
+
+			if (successRegister.length > 0) {
+				Swal.fire({
+					title: 'KAYDINIZ OLUŞTURULDU',
+					text: 'lütfen giriş sayfasından giriş yapınız',
+					icon: 'success',
+					confirmButtonText: 'Tamam'
+				}).then(() => {
+					// Başarılı olduğunda Login sayfasına yönlendirme yap
+					window.location.href = '/Login/Login'; 
+				});
+			} else if (field.length > 0) {
+					Swal.fire({
+						title: 'BİR SORUN OLUŞTU',
+						text: field,
+						icon: 'warning',
+						confirmButtonText: 'Tamam',
+					});
+				}
+			}
+	</script>
+</head>
+
+<body>
+	<div class="wrapper">
+		<form method="post" asp-controller="Register" asp-action="Register" enctype="multipart/form-data">
+			<h1>Yeni Kayıt</h1>
+			<div class="input-box">
+				<input type="text" placeholder="E-mail" asp-for="Mail" name="Mail" required />
+				<i class='bx bxs-user'></i>
+			</div>
+			<div class="input-box">
+				<input type="text" placeholder="Ad" asp-for="Name" name="Name" required />
+				<i class='bx bxs-user'></i>
+			</div>
+			<div class="input-box">
+				<input type="text" placeholder="Soyad" asp-for="Surname" name="Surname" required />
+				<i class='bx bxs-user'></i>
+			</div>
+			<div class="input-box">
+				<input type="password" placeholder="Şifreniz" asp-for="Password" name="Password" required />
+				<i class='bx bxs-lock-alt'></i>
+			</div>
+			<div class="input-box">
+				<input type="file" id="ProfilePicture" asp-for="Picture" style="display: none;" name="Picture">
+				<button type="button" onclick="document.getElementById('ProfilePicture').click()" id="ProfilePicture" class="btn btn-outline-dark">Profil Seç</button>
+				<i class='bx bxs-image-add'></i>
+			</div>
+			<div class="input-box" style="text-align: center;">
+				<p id="file-name" style="color: white;">Henüz resim seçilmedi</p>
+			</div>
+			<div style="height:30px;">
+			</div>
+			<button onclick="kayitYap()" type="submit" class="btn" style="background-color:#000033">Kayıt</button>
+			<div class="register-link">
+				<p>
+					<a href="/Login/Login">Giriş ekranına dönün</a>
+				</p>
+			</div>
+		</form>
+	</div>
+	<script>
+		document.getElementById('ProfilePicture').addEventListener('change', function (e) {
+			document.getElementById('file-name').textContent = e.target.files[0].name;
+		});
+	</script>
+</body>
+</html>

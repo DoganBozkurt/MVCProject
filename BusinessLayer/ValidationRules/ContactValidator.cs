@@ -1,5 +1,6 @@
 ﻿using EntityLayer.Concrete;
 using FluentValidation;
+using FluentValidation.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,11 @@ namespace BusinessLayer.ValidationRules
                                   }).WithMessage("Geçersiz e-mail adresi");
             RuleFor(x => x.Name).NotEmpty().WithMessage("Lütfen isminizi giriniz");
         }
-    }
+
+		public Task<ValidationResult> ValidateAsync(User p)
+		{
+			throw new NotImplementedException();
+		}
+	}
 
 }

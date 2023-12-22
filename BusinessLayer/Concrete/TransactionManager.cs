@@ -9,48 +9,51 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Concrete
 {
-    public class TransactionManager : ITransactionService
-    {
-        ITransactionDal _transactionDal;
+	public class TransactionManager : ITransactionService
+	{
+		ITransactionDal _transactionDal;
 
-        public TransactionManager(ITransactionDal transactionDal)
-        {
-            _transactionDal = transactionDal;
-        }
+		public TransactionManager(ITransactionDal transactionDal)
+		{
+			_transactionDal = transactionDal;
+		}
 
-        public void TAdd(Transaction t)
-        {
-            _transactionDal.Insert(t);
-        }
+		public void TAdd(Transaction t)
+		{
+			_transactionDal.Insert(t);
+		}
 
-        public List<Transaction> TGetAll()
-        {
-            return _transactionDal.GetList();
-        }
 
-        public Transaction TGetById(int id)
-        {
-            return _transactionDal.GetById(id);
-        }
+		public void TRemove(Transaction t)
+		{
+			_transactionDal.Delete(t);
+		}
 
-        public void TRemove(Transaction t)
-        {
-            _transactionDal.Delete(t);
-        }
+		public void TUpdate(Transaction t)
+		{
+			_transactionDal.Update(t);
+		}
 
-        public void TUpdate(Transaction t)
-        {
-            _transactionDal.Update(t);
-        }
+		public List<Transaction> TSelectedTransactions(int userId)
+		{
+			return _transactionDal.SelectedTransactions(userId);
+		}
 
-        public List<Transaction> TSelectedTransactions()
-        {
-            return _transactionDal.SelectedTransactions();
-        }
+		public List<Transaction> TTransactionsWithCategory(int id)
+		{
+			return _transactionDal.TransactionsWithCategory(id);
+		}
 
-        public List<Transaction> TTransactionsWithCategory()
-        {
-            return _transactionDal.TransactionsWithCategory();
-        }
-    }
+		public Transaction TGetById(int id)
+		{
+			return _transactionDal.GetById(id);
+		}
+
+
+		public List<Transaction> TGetTransactionsWithUserID(int userId)
+		{
+			return _transactionDal.GetTransactionsWithUserID(userId);
+		}
+
+	}
 }

@@ -11,43 +11,37 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.EntityFramework
 {
-    public class EFTransactionDal : GenericRepository<Transaction>, ITransactionDal
-    {
-        public List<Transaction> SelectedTransactions()
-        {
-            //son 7 gün
-            DateTime StartDate = DateTime.Today.AddDays(-6);
-            DateTime EndDate = DateTime.Today;
-            using (var C = new ContextDal())
-            {
+	public class EFTransactionDal : GenericRepository<Transaction>, ITransactionDal
+	{
+		public List<Transaction> SelectedTransactions(int userId)
+		{
+			//son 7 gün
+			DateTime StartDate = DateTime.Today.AddDays(-6);
+			DateTime EndDate = DateTime.Today;
+			using (var C = new ContextDal())
+			{
 
-                return  C.Transactions.Include(x => x.Category)
-                .Where(y => y.Date >= StartDate && y.Date >= EndDate)
-                .ToList();
-            }
-        }
-       public List<Transaction> TransactionsWithCategory()
-        {
-            using (var C = new ContextDal())
-            {
-                return C.Transactions.Include(x => x.Category)
-                .ToList();
-            }
-        }
+				return C.Transactions.Include(x => x.Category)
+				.Where(y => y.UserID==userId && y.Date >= StartDate && y.Date <= EndDate)
+				.ToList();
+			}
+		}
+		public List<Transaction> TransactionsWithCategory(int id)
+		{
+			using (var C = new ContextDal())
+			{
+				return C.Transactions.Include(x => x.Category).Where(x => x.UserID == id)
+				.ToList();
+			}
+		}
 
-        //    public int TotalExpenseAsync(List<Transaction> selectedTransactions)
-        //    {
-        //        var result= selectedTransactions.Where(i => i.Category.Type == "Income")
-        //            .Sum(j => j.Amount);
-        //        return result;
-        //    }
+		public List<Transaction> GetTransactionsWithUserID(int userId)
+		{
+			using (var c = new ContextDal())
+			{
+				return c.Set<Transaction>().Where(x => x.UserID == userId).ToList();
+			}
+		}
 
-        //    public int TotalIncomeAsync(List<Transaction> selectedTransactions)
-        //    {
-        //        var result=selectedTransactions
-        //            .Where(i => i.Category.Type == "Expense")
-        //            .Sum(j => j.Amount);
-        //        return result;
-        //    }
-    }
+	}
 }

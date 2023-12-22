@@ -9,5 +9,7 @@ namespace DataAccessLayer.Abstract
 {
     public interface IUserDal:IGenericDal<User>
     {
-    }
+		public Task<User> FindByEmailAsync(string email);
+
+	}
 }

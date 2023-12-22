@@ -12,14 +12,13 @@ namespace EntityLayer.Concrete
     public class Transaction
     {
         public int TransactionId { get; set; }
+		[ForeignKey("CategoryID")]
+		public int CategoryID { get; set; }
 
-        //Category
-        [Range(1, int.MaxValue, ErrorMessage = "Please select a category.")]
-        public int CategoryID { get; set; }
-        public Category2? Category { get; set; }
-
-
-        [Range(1, int.MaxValue, ErrorMessage = "Amount should be greater than 0.")]
+		[ForeignKey("Id")]
+		public int UserID { get; set; }
+		public Category? Category { get; set; }
+        public User? User { get; set; }
         public int Amount { get; set; }
 
         [Column(TypeName = "nvarchar(50)")]

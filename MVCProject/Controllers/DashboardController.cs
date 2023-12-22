@@ -1,24 +1,35 @@
 ﻿using BusinessLayer.Concrete;
 using DataAccessLayer.EntityFramework;
 using EntityLayer.Concrete;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
 namespace MVCProject.Controllers
 {
+    [Authorize]
     public class DashboardController : Controller
     {
 
         TransactionManager transactionManager = new TransactionManager(new EFTransactionDal());
-        public ActionResult Index()
+		readonly private UserManager<User> _userManager;
+
+		public DashboardController(UserManager<User> userManager)
+		{
+			_userManager = userManager;
+		}
+
+		public async Task<ActionResult> Index()
         {
             //son 7 gün
             DateTime StartDate = DateTime.Today.AddDays(-6);
             DateTime EndDate = DateTime.Today;
 
+			var currentUser = await _userManager.GetUserAsync(User);
 
-            List<Transaction> SelectedTransactions =  transactionManager.TSelectedTransactions();
+			List<Transaction> SelectedTransactions =  transactionManager.TSelectedTransactions(currentUser.Id);
 
 
             //Total Income

@@ -1,0 +1,59 @@
+﻿@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+	<title>Login Form</title>
+	<link rel="stylesheet" href="/css/loginAndRegister/style.css" />
+	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+	<script>
+		window.onload = function () {
+			var fieldLogin = '@Html.Raw(TempData["fieldLogin"])';
+			if (fieldLogin.length > 0) {
+				Swal.fire({
+					title: 'BİR SORUN OLUŞTU',
+					text: fieldLogin,
+					icon: 'warning',
+					confirmButtonText: 'Tamam',
+				});
+			}
+		}
+	</script>
+</head>
+
+<body>
+	<div class="wrapper">
+		<form method="post" asp-action="Login" asp-controller="Login">
+			<h1>Giriş</h1>
+
+			<div class="input-box">
+				<input type="text" placeholder="E-mail" name="Mail" required />
+				<i class='bx bxs-user'></i>
+			</div>
+			<div class="input-box">
+				<input type="password" placeholder="Şifreniz" name="Password" required />
+				<i class='bx bxs-lock-alt'></i>
+			</div>
+			<div style="height:30px;">
+			</div>
+			<button type="submit" class="btn">Giriş</button>
+			<div class="register-link">
+				<p>
+					Bir hesabınız yok mu?
+					<a href="/Register/Register">Kayıt ol</a>
+				</p>
+			</div>
+		</form>
+	</div>
+</body>
+</html>

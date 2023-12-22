@@ -9,7 +9,8 @@ namespace BusinessLayer.Abstract
 {
     public interface ITransactionService:IGenericService<Transaction>
     {
-        List<Transaction> TSelectedTransactions();
-        List<Transaction> TTransactionsWithCategory();
-    }
+        List<Transaction> TSelectedTransactions(int userId);
+        List<Transaction> TTransactionsWithCategory(int id);
+		List<Transaction> TGetTransactionsWithUserID(int userId);
+	}
 }

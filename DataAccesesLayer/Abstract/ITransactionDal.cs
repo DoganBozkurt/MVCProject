@@ -9,9 +9,10 @@ namespace DataAccessLayer.Abstract
 {
     public interface ITransactionDal : IGenericDal<Transaction>
     {
-       public List<Transaction> SelectedTransactions();
-        public List<Transaction> TransactionsWithCategory();
-        //int TotalIncomeAsync(List<Transaction> selectedTransactions);
-        //int TotalExpenseAsync(List<Transaction> selectedTransactions);
-    }
+       public List<Transaction> SelectedTransactions(int userId);
+        public List<Transaction> TransactionsWithCategory(int id);
+		List<Transaction> GetTransactionsWithUserID(int userId);
+		//int TotalIncomeAsync(List<Transaction> selectedTransactions);
+		//int TotalExpenseAsync(List<Transaction> selectedTransactions);
+	}
 }
