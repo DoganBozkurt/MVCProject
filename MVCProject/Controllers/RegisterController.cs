@@ -3,11 +3,13 @@ using BusinessLayer.ValidationRules;
 using EntityLayer.Concrete;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MVCProject.Controllers
 {
+	[AllowAnonymous]
     public class RegisterController : Controller
     {
         readonly private UserManager<User> _userManager;

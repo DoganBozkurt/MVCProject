@@ -4,10 +4,12 @@ using DataAccessLayer.EntityFramework;
 using EntityLayer.Concrete;
 using FluentValidation.AspNetCore;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MVCProject.Controllers
 {
+    [AllowAnonymous]
     public class DefaultController : Controller
     {
         ContactManager contactManager = new ContactManager(new EfContactDal());

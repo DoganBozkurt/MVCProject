@@ -2,11 +2,13 @@
 using DataAccessLayer.EntityFramework;
 using EntityLayer.Concrete;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MVCProject.Controllers
 {
+	[AllowAnonymous]
 	public class LoginController : Controller
 	{
 		readonly private SignInManager<User> _signInManager;

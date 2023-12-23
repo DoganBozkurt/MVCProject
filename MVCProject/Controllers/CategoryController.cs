@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MVCProject.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="Admin")]
     public class CategoryController : Controller
     {
         CategoryManager category2 = new CategoryManager(new EfCategoryDal());

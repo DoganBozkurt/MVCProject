@@ -8,6 +8,7 @@
     var httpContext = HttpContextAccessor.HttpContext;
     var userName = httpContext?.Session.GetString("UserName");
     var userProfileImage = httpContext?.Session.GetString("UserProfileImage");
+    var isAdmin = httpContext?.User.IsInRole("Admin");
 
     List<Object> menuItems = new List<Object>();
 
