@@ -21,12 +21,13 @@ namespace MVCProject.Controllers
 		[HttpGet]
 		public IActionResult Login()
 		{
-			return View();
+            return View();
 		}
 		[HttpPost]
 		public async Task<IActionResult> Login(User p)
 		{
-			var errorMessage = "";
+
+            var errorMessage = "";
 			if (ModelState.IsValid) // Kullanıcı modeli geçerli mi?
 			{
 				var result = await _signInManager.PasswordSignInAsync(p.Mail, p.Password, true, true);

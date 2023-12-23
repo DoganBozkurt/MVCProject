@@ -20,7 +20,9 @@ namespace MVCProject.Controllers
 
 		public async Task<IActionResult> Index()
         {
-			var currentUser = await _userManager.GetUserAsync(User);
+            //var b = 0;
+            //var a = 25 / b;
+            var currentUser = await _userManager.GetUserAsync(User);
 			var values = category2.TGetCategoriesWithUserID(currentUser.Id);
 
             return View(values);

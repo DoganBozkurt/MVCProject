@@ -38,7 +38,11 @@ namespace MVCProject.Controllers
                 return View(new Transaction());
             else
             {
-                var value = transactionManager.TGetById(id);
+                var value = transactionManager.TGetById(id); 
+                if (value == null)//This condition to catch the exception in the view ;)
+                {
+                    return View(new Transaction());
+                }
                 return View(value);
             }
         }

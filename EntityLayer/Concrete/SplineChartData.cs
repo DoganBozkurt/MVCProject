@@ -13,5 +13,6 @@ namespace EntityLayer.Concrete
 		public string? day;
 		public int income;
 		public int expense;
-	}
+        public int amount;
+    }
 }

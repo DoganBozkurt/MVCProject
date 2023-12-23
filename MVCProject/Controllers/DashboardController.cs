@@ -13,35 +13,35 @@ namespace MVCProject.Controllers
     public class DashboardController : Controller
     {
 
-        TransactionManager transactionManager = new TransactionManager(new EFTransactionDal());
-		readonly private UserManager<User> _userManager;
+        private readonly TransactionManager _transactionManager;
+        readonly private UserManager<User> _userManager;
+        private const string IncomeCategoryType = "Income";
+        private const string ExpenseCategoryType = "Expense";
 
-		public DashboardController(UserManager<User> userManager)
-		{
-			_userManager = userManager;
-		}
-
-		public async Task<ActionResult> Index()
+        public DashboardController(UserManager<User> userManager)
         {
-            //son 7 gün
+            _userManager = userManager;
+            _transactionManager = new TransactionManager(new EFTransactionDal());
+        }
+
+
+
+
+        public async Task<ActionResult> Index()
+        {
+            //last 7 days
             DateTime StartDate = DateTime.Today.AddDays(-6);
-            DateTime EndDate = DateTime.Today;
 
-			var currentUser = await _userManager.GetUserAsync(User);
-
-			List<Transaction> SelectedTransactions =  transactionManager.TSelectedTransactions(currentUser.Id);
-
+            //Active user by transtaction
+            var currentUser = await _userManager.GetUserAsync(User);
+            List<Transaction> selectedTransactions = _transactionManager.TSelectedTransactions(currentUser.Id);
 
             //Total Income
-            int TotalIncome = SelectedTransactions
-                .Where(i => i.Category.Type == "Income")
-                .Sum(j => j.Amount);
+            int TotalIncome = CalculateTotalAmount(selectedTransactions, IncomeCategoryType);
             ViewBag.TotalIncome = TotalIncome.ToString("C0");
 
             //Total Expense
-            int TotalExpense = SelectedTransactions
-                .Where(i => i.Category.Type == "Expense")
-                .Sum(j => j.Amount);
+            int TotalExpense = CalculateTotalAmount(selectedTransactions, ExpenseCategoryType);
             ViewBag.TotalExpense = TotalExpense.ToString("C0");
 
             //Balance
@@ -51,7 +51,31 @@ namespace MVCProject.Controllers
             ViewBag.Balance = String.Format(culture, "{0:C0}", Balance);
 
             //Doughnut Chart - Expense By Category
-            ViewBag.DoughnutChartData = SelectedTransactions
+            ViewBag.DoughnutChartData = GetDoughnutChartDate(selectedTransactions);
+
+            //Income
+            List<SplineChartData> IncomeSummary = GenerateIncomeSummary(selectedTransactions, IncomeCategoryType, StartDate);
+
+            //Expense
+            List<SplineChartData> ExpenseSummary = GenerateIncomeSummary(selectedTransactions, ExpenseCategoryType, StartDate);
+
+            //Spline Chart
+            var splineChartData = CombineChartData(StartDate, IncomeSummary, ExpenseSummary);
+            ViewBag.SplineChartData = splineChartData;
+
+            return View();
+        }
+
+        private int CalculateTotalAmount(List<Transaction> transactions, string categoryType)
+        {
+            return transactions
+                .Where(t => t.Category.Type == categoryType)
+                .Sum(t => t.Amount);
+        }
+
+        private List<Object> GetDoughnutChartDate(IEnumerable<Transaction> selectedTransactions)
+        {
+            return selectedTransactions
                 .Where(i => i.Category.Type == "Expense")
                 .GroupBy(j => j.Category.CategoryID)
                 .Select(k => new
@@ -61,50 +85,60 @@ namespace MVCProject.Controllers
                     formattedAmount = k.Sum(j => j.Amount).ToString("C0"),
                 })
                 .OrderByDescending(l => l.amount)
-                .ToList();
+                .ToList<object>();
+        }
 
-            //Spline Chart - Income vs Expense
+        private List<SplineChartData> GenerateIncomeSummary(List<Transaction> selectedTransactions, string categoryType, DateTime startDate)
+        {
+            string[] last7Days = Enumerable.Range(0, 7)
+            .Select(i => startDate.AddDays(i).ToString("dd-MMM"))
+            .ToArray();
 
-            //Income
-            List<SplineChartData> IncomeSummary = SelectedTransactions
-                .Where(i => i.Category.Type == "Income")
-                .GroupBy(j => j.Date)
-                .Select(k => new SplineChartData()
+            var result = Enumerable.Range(0, 7)
+                    .Select(i => startDate.AddDays(i))
+                    .GroupJoin(
+                        selectedTransactions.Where(i => i.Category.Type == categoryType),
+                        date => date,
+                        transaction => transaction.Date,
+                        (date, transactions) => new SplineChartData()
+                        {
+                            day = date.ToString("dd-MMM"),
+                            amount = transactions.Any() ? transactions.Sum(l => l.Amount) : 0
+                        })
+                    .ToList();
+
+            int lastItem = 0;
+            foreach (var data in result)
+            {
+                if (data.amount == 0)
                 {
-                    day = k.First().Date.ToString("dd-MMM"),
-                    income = k.Sum(l => l.Amount)
-                })
-                .ToList();
-
-            //Expense
-            List<SplineChartData> ExpenseSummary = SelectedTransactions
-                .Where(i => i.Category.Type == "Expense")
-                .GroupBy(j => j.Date)
-                .Select(k => new SplineChartData()
+                    data.amount = lastItem;
+                }
+                else
                 {
-                    day = k.First().Date.ToString("dd-MMM"),
-                    expense = k.Sum(l => l.Amount)
-                })
-                .ToList();
+                    lastItem = data.amount;
+                }
+            }
 
-            //Combine Income & Expense
-            string[] Last7Days = Enumerable.Range(0, 7)
-                .Select(i => StartDate.AddDays(i).ToString("dd-MMM"))
+            return result;
+        }
+        private IEnumerable<object> CombineChartData(DateTime startDate, List<SplineChartData> incomeSummary, List<SplineChartData> expenseSummary)
+        {
+            string[] last7Days = Enumerable.Range(0, 7)
+                .Select(i => startDate.AddDays(i).ToString("dd-MMM"))
                 .ToArray();
 
-            ViewBag.SplineChartData = from day in Last7Days
-                                      join income in IncomeSummary on day equals income.day into dayIncomeJoined
-                                      from income in dayIncomeJoined.DefaultIfEmpty()
-                                      join expense in ExpenseSummary on day equals expense.day into expenseJoined
-                                      from expense in expenseJoined.DefaultIfEmpty()
-                                      select new
-                                      {
-                                          day = day,
-                                          income = income == null ? 0 : income.income,
-                                          expense = expense == null ? 0 : expense.expense,
-                                      };
-
-            return View();
+            return from day in last7Days
+                   join income in incomeSummary on day equals income.day into dayIncomeJoined
+                   from income in dayIncomeJoined.DefaultIfEmpty()
+                   join expense in expenseSummary on day equals expense.day into expenseJoined
+                   from expense in expenseJoined.DefaultIfEmpty()
+                   select new
+                   {
+                       day = day,
+                       income = income?.amount ?? 0,
+                       expense = expense?.amount ?? 0,
+                   };
         }
     }
 }

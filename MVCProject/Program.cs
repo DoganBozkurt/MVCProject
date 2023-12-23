@@ -4,16 +4,27 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
+using MVCProject.Exceptions;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Serilog yapýlandýrmasý
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/logs.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog(); // Serilog'u kullanmak için bu satýrý ekledim
+
 //Register Syncfusion license
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mgo+DSMBMAY9C3t2VlhiQlVPd11dXmJWd1p/THNYflR1fV9DaUwxOX1dQl9gSHxSf0VkWXxbcHFTRWU=");
 
-// Add services to the container.
+// Identity services
 builder.Services.AddDbContext<ContextDal>();
 builder.Services.AddIdentity<User, UserRole>(options =>
 {
-    // Þifre politikalarýný burada yapýlandýrabilirsiniz
+    //Identity Þifre politikalarýný burada yaptým
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
     options.Password.RequireUppercase = false;
@@ -32,8 +43,9 @@ builder.Services.AddSession(options =>
 });
 
 var app = builder.Build();
+//Excepiton yaklamak için
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
