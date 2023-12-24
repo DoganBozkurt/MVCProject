@@ -39,30 +39,18 @@ namespace BusinessLayer.Concrete
 			throw new NotImplementedException();
 		}
 
-		void IGenericService<User>.TAdd(User t)
-		{
-			throw new NotImplementedException();
-		}
-
-
-		User IGenericService<User>.TGetById(int id)
-		{
-			throw new NotImplementedException();
-		}
-
-		void IGenericService<User>.TRemove(User t)
-		{
-			throw new NotImplementedException();
-		}
-
-		void IGenericService<User>.TUpdate(User t)
-		{
-			throw new NotImplementedException();
-		}
 		public Task<User> TFindByEmailAsync(string email)
 		{
 			return _userDal.FindByEmailAsync(email);
 		}
+        public List<User> TGetAll()
+        {
+            return _userDal.GetAll();
+        }
 
-	}
+        public List<User> TUsersWithRoles()
+        {
+            return _userDal.GetUsersByRoles();
+        }
+    }
 }

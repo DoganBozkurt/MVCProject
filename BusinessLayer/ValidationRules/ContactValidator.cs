@@ -31,10 +31,6 @@ namespace BusinessLayer.ValidationRules
             RuleFor(x => x.Name).NotEmpty().WithMessage("Lütfen isminizi giriniz");
         }
 
-		public Task<ValidationResult> ValidateAsync(User p)
-		{
-			throw new NotImplementedException();
-		}
 	}
 
 }

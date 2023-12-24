@@ -1,16 +1,18 @@
 ﻿using BusinessLayer.Concrete;
+using BusinessLayer.ValidationRules;
 using DataAccessLayer.EntityFramework;
 using EntityLayer.Concrete;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MVCProject.Controllers
 {
-    [Authorize(Roles ="Admin")]
+    [Authorize]
     public class CategoryController : Controller
     {
-        CategoryManager category2 = new CategoryManager(new EfCategoryDal());
+        CategoryManager _categoryManager = new CategoryManager(new EfCategoryDal());
 		readonly private UserManager<User> _userManager;
 
 		public CategoryController(UserManager<User> userManager)
@@ -23,7 +25,7 @@ namespace MVCProject.Controllers
             //var b = 0;
             //var a = 25 / b;
             var currentUser = await _userManager.GetUserAsync(User);
-			var values = category2.TGetCategoriesWithUserID(currentUser.Id);
+			var values = _categoryManager.TGetCategoriesWithUserID(currentUser.Id);
 
             return View(values);
         }
@@ -35,42 +37,49 @@ namespace MVCProject.Controllers
                 return View(new Category());
             else
             {
-                var value = category2.TGetById(id);
+                var value = _categoryManager.TGetById(id);
                 return View(value);
             }
 
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddOrEdit([Bind("CategoryID,Title,Icon,Type")] Category category)
+        public async Task<IActionResult> AddOrEdit(Category category)
         {
-            if (ModelState.IsValid)
+            CategoryValidator validations = new CategoryValidator(_categoryManager,category.Title);
+            ValidationResult result =await validations.ValidateAsync(category);
+            var currentUser = await _userManager.GetUserAsync(User);
+            category.UserID = currentUser.Id;
+            if (result.IsValid)
             {
-				var currentUser = await _userManager.GetUserAsync(User);
-				category.UserID = currentUser.Id;
 				if (category.CategoryID == 0)
                 {
-					category2.TAdd(category);
+					_categoryManager.TAdd(category);
                 }
                 else
-                    category2.TUpdate(category);
+                    _categoryManager.TUpdate(category);
 
                 return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                foreach (var item in result.Errors)
+                {
+                    ModelState.AddModelError(item.PropertyName, item.ErrorMessage);
+                }
             }
             return View(category);
         }
 
 
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
             
-            var category = category2.TGetById(id);
+            var category = _categoryManager.TGetById(id);
             if (category != null)
             {
-                category2.TRemove(category);
+                _categoryManager.TRemove(category);
             }
 
             return RedirectToAction(nameof(Index));

@@ -11,6 +11,7 @@ namespace BusinessLayer.Abstract
         void TAdd(T t);
         void TUpdate(T t);
         void TRemove(T t);
+        List<T> TGetAll();
 		T TGetById(int id);
 	}
 }

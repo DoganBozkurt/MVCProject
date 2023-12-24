@@ -11,6 +11,26 @@
     var isAdmin = httpContext?.User.IsInRole("Admin");
 
     List<Object> menuItems = new List<Object>();
+    if (isAdmin==true)
+    {
+        menuItems.Add(new
+        {
+            text = "Admin Controler",
+            separator = true,
+        });
+        menuItems.Add(new
+        {
+            text = "Messages",
+            url = "/Admin/ListContact",
+            iconCss = "fa-solid fa-envelope"
+        });
+        menuItems.Add(new
+        {
+            text = "Users",
+            url = "/Admin/ListUserWithRoles",
+            iconCss = "fa-solid fa-users-gear"
+        });
+    }
 
     menuItems.Add(new
     {
@@ -23,6 +43,7 @@
         url = "/Dashboard",
         iconCss = "fa-solid fa-box",
     });
+
     menuItems.Add(new
     {
         text = "Categories",

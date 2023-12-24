@@ -20,5 +20,13 @@ namespace DataAccessLayer.EntityFramework
 				return await c.Set<User>().FirstOrDefaultAsync(x => x.UserName == email);
 			}
 		}
-	}
+
+        public List<User> GetUsersByRoles()
+        {
+			using (var c= new ContextDal())
+			{
+				return c.Set<User>().Include(x => x.Roles).Where(y=>y.Id==1).ToList();
+			}
+        }
+    }
 }

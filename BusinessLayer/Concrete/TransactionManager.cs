@@ -55,5 +55,10 @@ namespace BusinessLayer.Concrete
 			return _transactionDal.GetTransactionsWithUserID(userId);
 		}
 
-	}
+        public List<Transaction> TGetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+    }
 }

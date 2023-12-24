@@ -23,14 +23,15 @@ namespace BusinessLayer.Concrete
             _contactDal.Insert(t);
         }
 
-        public List<Contact> TGetAll(int userId)
+        public List<Contact> TGetAll()
         {
-            throw new NotImplementedException();
+            return _contactDal.GetAll();
         }
+
 
         public Contact TGetById(int id)
         {
-            return _contactDal.GetById(id); 
+            throw new NotImplementedException();
         }
 
         public void TRemove(Contact t)

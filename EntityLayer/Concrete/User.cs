@@ -20,5 +20,7 @@ public class User : IdentityUser<int>
 	// Kullanıcıdan alınan resmi tutacak olan alan
 	[NotMapped] // Veritabanına yansıtılmasını engeller
 	public IFormFile? Picture { get; set; }
+	[NotMapped]
+    public List<UserRole>? Roles { get; set; }
 }
 
