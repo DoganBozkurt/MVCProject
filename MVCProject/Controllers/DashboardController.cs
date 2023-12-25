@@ -63,6 +63,8 @@ namespace MVCProject.Controllers
             var splineChartData = CombineChartData(StartDate, IncomeSummary, ExpenseSummary);
             ViewBag.SplineChartData = splineChartData;
 
+            //Last Transaction
+            ViewBag.RecentTransactions = selectedTransactions.TakeLast(3).ToList();
             return View();
         }
 
@@ -80,7 +82,8 @@ namespace MVCProject.Controllers
                 .GroupBy(j => j.Category.CategoryID)
                 .Select(k => new
                 {
-                    categoryTitleWithIcon = k.First().Category.Icon + " " + k.First().Category.Title,
+                   // categoryTitleWithIcon = k.First().Category.IconData.Title + " " + k.First().Category.Title,
+                    categoryTitleWithIcon = k.First().Category.Title,
                     amount = k.Sum(j => j.Amount),
                     formattedAmount = k.Sum(j => j.Amount).ToString("C0"),
                 })
@@ -140,5 +143,6 @@ namespace MVCProject.Controllers
                        expense = expense?.amount ?? 0,
                    };
         }
+
     }
 }

@@ -17,7 +17,7 @@ namespace DataAccessLayer.EntityFramework
 		{
 			using (var c = new ContextDal())
 			{
-				return c.Set<Category>().Where(x => x.UserID == id).ToList();
+				return c.Set<Category>().Include(y=> y.IconData).Where(x => x.UserID == id).ToList();
 			}
 
 		}

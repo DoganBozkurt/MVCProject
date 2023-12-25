@@ -1,0 +1,42 @@
+﻿@model EntityLayer.Concrete.Icon
+
+@{
+	ViewData["PageTitle"] = Model.IconID == 0 ? "Create a new icon" : "Edit icon";
+}
+
+<div class="row">
+	<div class="col-md-7">
+		<div classs="widget p-5">
+			<form asp-action="AddOrEdit">
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+				<input type="hidden" name="IconID" value="@Model.IconID" />
+				<div class="mb-3">
+					<ejs-textbox id="title" placeholder="Title" ejs-for="@Model.Title" floatLabelType="Always"></ejs-textbox>
+					<span asp-validation-for="Title" class="text-danger fs-6"></span>
+				</div>
+				<div class="mb-3">
+					<ejs-textbox id="Icon" placeholder="Icon" ejs-for="@Model.IIcon" floatLabelType="Always"></ejs-textbox>
+					<span asp-validation-for="IIcon" class="text-danger fs-6"></span>
+				</div>
+				<ejs-button id="submit" type="submit" content="Submit" cssClass="e-success"> </ejs-button>
+
+			</form>
+
+
+		</div>
+
+	</div>
+	<div class="col-md-5">
+		<div class="widget h-100 d-flex justify-content-center align-items-center">
+			<i class="fa-solid fa-edit fa-2xl"></i>
+		</div>
+	</div>
+</div>
+
+
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}

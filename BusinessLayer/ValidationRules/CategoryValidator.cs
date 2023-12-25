@@ -10,22 +10,26 @@ namespace BusinessLayer.ValidationRules
     public class CategoryValidator : AbstractValidator<Category>
     {
 
-        public CategoryValidator(CategoryManager categoryManager,string title)
+        public CategoryValidator(CategoryManager categoryManager,string title, int id)
         {
 
 
             RuleFor(x => x.Title)
                 .NotEmpty().WithMessage("Lütfen kategori başlığı giriniz")
-                .Must((catgory) => !CategoryWithTitleExists(categoryManager,title))
+                .Must((catgory) => !CategoryWithTitleExists(categoryManager,title,id))
                 .WithMessage("Bu başlıkta bir kategori zaten mevcut");
 
-            RuleFor(x => x.Icon)
+            RuleFor(x => x.IconID)
                 .NotEmpty().WithMessage("Lütfen bir icon seçiniz");
         }
 
-        private bool CategoryWithTitleExists(CategoryManager categoryManager,string title)
+        private bool CategoryWithTitleExists(CategoryManager categoryManager,string title, int id)
         {
-            return categoryManager.TGetAll().Any(x => x.Title == title);
+            if (id==0)
+            {
+				return categoryManager.TGetAll().Any(x => x.Title == title);
+			}
+            return false;
         }
     }
 }

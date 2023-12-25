@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Tokens;
 
 namespace EntityLayer.Concrete
 {
@@ -17,22 +18,24 @@ namespace EntityLayer.Concrete
 		public User? User { get; set; }
 
 		[Required(ErrorMessage = "Title is required.")]
-        public string Title { get; set; }
+		public string? Title { get; set; }
 
-        [Column(TypeName = "nvarchar(50)")]
-        public string Icon { get; set; } = "";
+		// İlişkiyi temsil etmek için kullanılan property
+		public int IconID { get; set; }
+        public Icon IconData { get; set; }
 
-        [Column(TypeName = "nvarchar(50)")]
+		[Column(TypeName = "nvarchar(50)")]
         public string Type { get; set; } = "Expense";
 
-        [NotMapped]
-        public string? TitleWithIcon
-        {
-
-            get
-            {
-                return this.Icon + " " + this.Title;
-            }
-        }
-    }
+		[NotMapped]
+		public string? TitleWithIcon
+		{
+			get
+			{
+				if (IconData == null || IconData.IIcon.IsNullOrEmpty())
+					return "No icon";
+				return this.IconData.IIcon + " " + this.Title;
+			}
+		}
+	}
 }

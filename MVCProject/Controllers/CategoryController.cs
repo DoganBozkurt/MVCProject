@@ -13,6 +13,7 @@ namespace MVCProject.Controllers
     public class CategoryController : Controller
     {
         CategoryManager _categoryManager = new CategoryManager(new EfCategoryDal());
+        IconManager _iconManager = new IconManager(new EfIconDal());
 		readonly private UserManager<User> _userManager;
 
 		public CategoryController(UserManager<User> userManager)
@@ -33,7 +34,8 @@ namespace MVCProject.Controllers
 
         public IActionResult AddOrEdit(int id = 0)
         {
-            if (id == 0)
+			ViewBag.IconData = _iconManager.TGetAll();
+			if (id == 0)
                 return View(new Category());
             else
             {
@@ -46,7 +48,8 @@ namespace MVCProject.Controllers
         [HttpPost]
         public async Task<IActionResult> AddOrEdit(Category category)
         {
-            CategoryValidator validations = new CategoryValidator(_categoryManager,category.Title);
+			
+            CategoryValidator validations = new CategoryValidator(_categoryManager,category.Title, category.CategoryID);
             ValidationResult result =await validations.ValidateAsync(category);
             var currentUser = await _userManager.GetUserAsync(User);
             category.UserID = currentUser.Id;
