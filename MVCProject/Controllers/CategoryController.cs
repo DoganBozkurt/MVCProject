@@ -48,11 +48,11 @@ namespace MVCProject.Controllers
         [HttpPost]
         public async Task<IActionResult> AddOrEdit(Category category)
         {
-			
-            CategoryValidator validations = new CategoryValidator(_categoryManager,category.Title, category.CategoryID);
+			ViewBag.IconData = _iconManager.TGetAll();
+			var currentUser = await _userManager.GetUserAsync(User);
+			category.UserID = currentUser.Id;
+			CategoryValidator validations = new CategoryValidator(_categoryManager,currentUser.Id,category.Title, category.CategoryID);
             ValidationResult result =await validations.ValidateAsync(category);
-            var currentUser = await _userManager.GetUserAsync(User);
-            category.UserID = currentUser.Id;
             if (result.IsValid)
             {
 				if (category.CategoryID == 0)
