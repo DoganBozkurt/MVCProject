@@ -21,12 +21,5 @@ namespace DataAccessLayer.EntityFramework
 			}
 
 		}
-
-
-		//public Category GetById(int id, int userId)
-		//{
-		//	using var c = new ContextDal();
-		//	return c.Set<Category>().Where(x => x.UserID == userId).
-		//}
 	}
 }

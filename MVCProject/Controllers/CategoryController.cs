@@ -23,8 +23,7 @@ namespace MVCProject.Controllers
 
 		public async Task<IActionResult> Index()
         {
-            //var b = 0;
-            //var a = 25 / b;
+
             var currentUser = await _userManager.GetUserAsync(User);
 			var values = _categoryManager.TGetCategoriesWithUserID(currentUser.Id);
 
@@ -40,6 +39,10 @@ namespace MVCProject.Controllers
             else
             {
                 var value = _categoryManager.TGetById(id);
+                if(value == null)
+                {
+                    return View(new Category());
+                }
                 return View(value);
             }
 

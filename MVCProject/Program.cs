@@ -62,7 +62,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 var app = builder.Build();
 //Excepiton yaklamak için
-//app.UseMiddleware<ExceptionHandlerMiddleware>();
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 if (!app.Environment.IsDevelopment())
 {

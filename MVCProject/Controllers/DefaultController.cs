@@ -15,6 +15,8 @@ namespace MVCProject.Controllers
         ContactManager contactManager = new ContactManager(new EfContactDal());
         public IActionResult Index()
         {
+            //var b = 0;
+            //var a = 25 / b;
             return View();
         }
         public IActionResult Head()
